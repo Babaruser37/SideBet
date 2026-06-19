@@ -24,6 +24,6 @@ export const actions: Actions = {
 
 		// Auth cookies are handled automatically by our server hook. 
 		// Redirect directly to the pool lobby.
-		throw redirect(303, '/dashboard');
+		throw redirect(303, '/');
 	}
 };
