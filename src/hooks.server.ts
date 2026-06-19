@@ -13,15 +13,21 @@ export const handle: Handle = async ({ event, resolve }) => {
             }
         }
     });
-    event.locals.safeGetSession = async () => {
-        const { data: { session } } = await event.locals.supabase.auth.getSession();
-        if (!session) return { session: null, user: null };
-        return { session, user: session.user };
-    };
+	event.locals.safeGetSession = async () => {
+		const { data: { session } } = await event.locals.supabase.auth.getSession();
+		if (!session) return { session: null, user: null };
 
-    if (event.url.pathname.startsWith('/dashboard')) {
-		const { session } = await event.locals.safeGetSession();
-		if (!session) {
+		const { data: { user }, error } = await event.locals.supabase.auth.getUser();
+		if (error) {
+			return { session: null, user: null };
+		}
+
+		return { session, user };
+	};
+
+	if (event.url.pathname.startsWith('/profile')) {
+		const { user } = await event.locals.safeGetSession();
+		if (!user) {
 			return new Response('Redirect', { status: 303, headers: { Location: '/login' } });
 		}
 	}
